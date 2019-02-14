@@ -1,0 +1,12 @@
+<script>
+  window.gameName = "<%= @game %>";
+</script>
+
+<div class="row">
+  <div class="column">
+    <h2>Game room: <%= @game %></h2>
+    <div id="root">
+      <p>...</p>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,4 @@
 defmodule Othello.Game do
-
 	"""
 	To keep truck of players turns, we store "black" or "white" in turn, 
 	black --> player1's turn  --> black pieces
@@ -214,23 +213,4 @@ defmodule Othello.Game do
 				checkDirect(game, row, col)
 		end
 	end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+end
