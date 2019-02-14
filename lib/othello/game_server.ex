@@ -20,25 +20,17 @@ defmodule Othello.GameServer do
     GenServer.start_link(__MODULE__, game, name: reg(name))
   end
 
-  def guess(name, letter) do
-    GenServer.call(reg(name), {:guess, name, letter})
-  end
-
-  def peek(name) do
-    GenServer.call(reg(name), {:peek, name})
+  def click(name, tile) do
+    GenServer.call(reg(name), {:guess, name, tile})
   end
 
   def init(game) do
     {:ok, game}
   end
 
-  def handle_call({:guess, name, letter}, _from, game) do
-    game = Othello.Game.guess(game, letter)
+  def handle_call({:click, name, tile}, _from, game) do
+    game = Othello.Game.handle_click(game, tile)
     Othello.BackupAgent.put(name, game)
-    {:reply, game, game}
-  end
-
-  def handle_call({:peek, _name}, _from, game) do
     {:reply, game, game}
   end
 end

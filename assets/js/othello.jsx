@@ -11,8 +11,8 @@ class Othello extends React.Component {
     super(props);
     this.state = { 
       board: [],
-      player: null,
-      turn: 1,
+      player: "",
+      turn: "black",
       blackScore: 2,
       whiteScore: 2,
       status: "waiting"
@@ -42,7 +42,7 @@ class Othello extends React.Component {
   }
 
   handleClick(tile) {
-    
+
     if (tile.color == "green") {
       this.channel.push("click", {tile: tile})
         .receive("ok", this.updateView.bind(this));
@@ -67,15 +67,15 @@ class Othello extends React.Component {
         return `It's Player ${this.state.turn}'s turn.`;
       case "finished":
         if (blackScore < whiteScore) {
-            if (this.state.player == 1) {
-            return "You won!";
-            }
-            return "Player 1 won!";
-        } else if (blackScore > whiteScore) {
-            if (this.state.player == 2) {
+            if (this.state.player == "white") {
             return "You won!";
             }
             return "Player 2 won!";
+        } else if (blackScore > whiteScore) {
+            if (this.state.player == "black") {
+            return "You won!";
+            }
+            return "Player 1 won!";
         } else {
             return "Tie";
         }
