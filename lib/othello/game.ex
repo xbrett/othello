@@ -214,3 +214,4 @@ defmodule Othello.Game do
 		end
 	end
 end
+
