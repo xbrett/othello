@@ -122,16 +122,16 @@ function RenderRow(props) {
   let row = [];
 
   for (let j = 0; j < tiles.length; j++) {
-    if (tiles[j].visible) {
+    if (tiles[j].color == "green") {
       row.push(
         <td key={tiles[j].key} onClick={() =>  root.handleClick(tiles[j])}>
-          <div data-key={tiles[j].key} className="tile visible">{tiles[j].letter}</div>
+          <div data-key={tiles[j].key} className="tile">{tiles[j].letter}</div>
         </td>
       );
     } else {
       row.push(
         <td key={tiles[j].key} onClick={() => { root.handleClick(tiles[j])}}>
-          <div data-key={tiles[j].key} className="tile">{tiles[j].letter}</div>
+          <div data-key={tiles[j].key} className="tile visible ">{tiles[j].letter}</div>
         </td>
       );
     } 
