@@ -10,8 +10,19 @@ class Othello extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-     };
+      board: [],
+      player: null,
+      turn: 1,
+      blackScore: 2,
+      whiteScore: 2,
+      status: "waiting"
+    };
     this.channel = props.channel;
+
+    this.channel.on("waiting", view => { this.updateView(view, "waiting") });
+    this.channel.on("playing", view => { this.updateView(view, "playing") });
+    this.channel.on("finished", view => { this.gameOver(view, "finished") });
+    this.channel.on("player_left", view => { this.gameOver(view, "player_left") });
 
     this.channel
         .join()
@@ -19,12 +30,25 @@ class Othello extends React.Component {
         .receive("error", resp => { console.log("Unable to join", resp); });
   }
 
-  updateView(view) {
+  updateView(view, status) {
+    console.log("View updated: " + view.game);
     this.setState(view.game);
+    this.setState({ status: status })
+  }
+
+  gameOver(view, status) {
+    this.channel.leave();
+    this.updateView(view, status);
   }
 
   handleClick(tile) {
-
+    
+    if (tile.color == "green") {
+      this.channel.push("click", {tile: tile})
+        .receive("ok", this.updateView.bind(this));
+    } else {
+      return;
+    }
   }
 
   restart() {
@@ -32,17 +56,46 @@ class Othello extends React.Component {
         .receive("ok", this.updateView.bind(this));
   }
 
+  getGameHeader() {
+    switch(this.game.status) {
+      case "waiting":
+        return "Opponents turn";
+      case "playing":
+        if (this.state.turn == this.state.player) {
+            return "Your turn";
+        }
+        return `It's Player ${this.state.turn}'s turn.`;
+      case "finished":
+        if (blackScore < whiteScore) {
+            if (this.state.player == 1) {
+            return "You won!";
+            }
+            return "Player 1 won!";
+        } else if (blackScore > whiteScore) {
+            if (this.state.player == 2) {
+            return "You won!";
+            }
+            return "Player 2 won!";
+        } else {
+            return "Tie";
+        }
+      case "player_left":
+        return "Opponent has left the game.";
+    }
+  }
+
   render() {
     return (
       <div className="othello">
         <h1>Othello</h1>
+        <h3>Status: {this.getGameHeader()}</h3>
         <table className="board">
           <tbody>
-            <RenderBoard root={this} tiles={this.state.tiles}/>
+            <RenderBoard root={this} tiles={this.state.board}/>
           </tbody>
         </table>
-        <h4>Player 1: {this.state.score}</h4>
-        <h4>Player 2: {this.state.score}</h4>
+        <h4>Player 1: {this.state.blackScore}</h4>
+        <h4>Player 2: {this.state.whiteScore}</h4>
         <button type="button" onClick={this.restart.bind(this)}>Restart</button>
       </div>
     );
@@ -52,12 +105,12 @@ class Othello extends React.Component {
 function RenderBoard(props) {
   let { root, tiles } = props;
   let board = [];
-  let width = 4;
+  let width = 8;
 
   for (let i = 0; i < width; i++) {
     board.push(
       <tr key={i}>
-        <RenderRow root={root} tiles={tiles.slice(i*width, i*width+4)} />
+        <RenderRow root={root} tiles={tiles.slice(i*width, i*width+width)} />
       </tr>
     );
   }

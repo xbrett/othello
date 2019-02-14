@@ -20,4 +20,11 @@ defmodule OthelloWeb.GamesChannel do
     {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
   end
 
+  def handle_in("click", %{"tile" => tile}, socket) do
+    game = Game.handle_click(socket.assigns[:game], Util.to_atoms(tile));
+    socket = assign(socket, :game, game)
+    BackupAgent.put(socket.assigns[:name], game)
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+  end
+
 end
