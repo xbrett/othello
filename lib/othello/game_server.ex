@@ -20,6 +20,10 @@ defmodule Othello.GameServer do
     GenServer.start_link(__MODULE__, game, name: reg(name))
   end
 
+  def join(name, player) do
+    GenServer.call(reg(name), {:join, name, player})
+  end
+
   def click(name, tile) do
     GenServer.call(reg(name), {:guess, name, tile})
   end
@@ -28,9 +32,23 @@ defmodule Othello.GameServer do
     {:ok, game}
   end
 
+  def handle_call({:join, name, player}, _from, game) do
+    with {:ok, game} <- Othello.Game.join(game, player) do
+      Othello.BackupAgent.put(name, game)
+      {:reply, {:ok, game}, game}
+    else
+      {:error, msg} -> {:reply, {:error, msg}, game}
+      _ -> {:reply, {:error, "unknown error"}, game}
+    end
+  end
+
   def handle_call({:click, name, tile}, _from, game) do
-    game = Othello.Game.handle_click(game, tile)
-    Othello.BackupAgent.put(name, game)
-    {:reply, game, game}
+    with {:ok, game} <- Othello.Game.handleClick(game, tile) do
+      Othello.BackupAgent.put(name, game)
+      {:reply, {:ok, game}, game}
+    else
+      {:error, msg} -> {:reply, {:error, msg}, game}
+      _ -> {:reply, {:error, "unknown error"}, game}
+    end
   end
 end
