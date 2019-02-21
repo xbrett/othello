@@ -5,7 +5,11 @@ defmodule OthelloWeb.GamesChannel do
 
   def join("game:" <> game, _payload, socket) do
     socket = assign(socket, :game, game)
-    view = GameServer.view(game, socket.assigns[:user])
+    IO.inspect(game)
+    lala = socket.assigns[:user]
+    IO.inspect(lala)
+    view = GameServer.view(game, lala)
+    #push_update! view, socket
     {:ok, %{"join" => game, "game" => view}, socket}
   end
 

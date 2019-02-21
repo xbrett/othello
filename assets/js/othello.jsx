@@ -22,6 +22,7 @@ class Othello extends React.Component {
 
     this.channel.join()
       .receive("ok", this.updateView.bind(this))
+      .receive("ok", resp => { console.log("Success", resp) })
       .receive("error", resp => { console.log("Unable to join", resp) })
   
     this.channel.on("update", view => this.updateView(view));

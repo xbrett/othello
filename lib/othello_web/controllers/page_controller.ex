@@ -7,6 +7,7 @@ defmodule OthelloWeb.PageController do
 
   def join(conn, %{"join" => %{"user" => user, "game" => game}}) do
     conn
+    |> put_session(:name, game)
     |> put_session(:user, user)
     |> redirect(to: "/game/#{game}")
   end

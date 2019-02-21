@@ -13,7 +13,7 @@ defmodule Othello.Game do
 		%{
 			board: [],
 			turn: "black",
-			player1: "sss",
+			player1: "",
 			player2: "",
 			status: ""
 		}
