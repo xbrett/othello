@@ -1,7 +1,6 @@
 defmodule OthelloWeb.GamesChannel do
   use OthelloWeb, :channel
 
-  alias Othello.Game
   alias Othello.GameServer
 
   def join("game:" <> game, _payload, socket) do
@@ -11,13 +10,19 @@ defmodule OthelloWeb.GamesChannel do
   end
 
   def handle_in("click", %{"id" => id}, socket) do
-    reply = GameServer.click(socket.assigns[:name], socket.assigns[:user], id)
-    case reply do
-      {:ok, game} -> broadcast(socket, "playing", %{game: Game.client_view(game)})
-                    {:noreply, socket}
-      {:error, msg} -> {:reply, {:error, %{msg: msg}}, socket}
-      _ -> {:reply, {:error, %{msg: "unknown error"}}, socket}
-    end
+    view = GameServer.click(socket.assigns[:name], socket.assigns[:user], id)
+    push_update! view, socket
+    {:reply, {:ok, %{ "game" => view}}, socket}
+  end
+
+  def handle_out("update", game, socket) do
+    IO.inspect("Broadcasting update to #{socket.assigns[:user]}")
+    push socket, "update", %{ "game" => game }
+    {:noreply, socket}
+  end
+
+  defp push_update!(view, socket) do
+    broadcast!(socket, "update", view)
   end
 
 end
