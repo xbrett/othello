@@ -64,7 +64,7 @@ defmodule Othello.Game do
 			new()
 				|> Map.put(:player1, game.player1)
 				|> Map.put(:player2, game.player2)
-				|> Map.put(:status, "playing")
+				|> Map.put(:status, "black's turn")
 		end
 
 		def addUser(game, userName) do
@@ -79,7 +79,7 @@ defmodule Othello.Game do
 			if (game.player2 == "") do
 				game
 				|> Map.put(:player2, userName)
-				|> Map.put(:status, "playing")
+				|> Map.put(:status, "black's turn")
 
 			# else	# There are two players in the game already
 				## TODO ??? ##
@@ -114,14 +114,12 @@ defmodule Othello.Game do
       		# There is somehting to turn based on the valid move
       		if (length(pcsToTurn != 0)) do
       			newBoard = Enum.map(pcsToTurn, fn x ->
-      			#Enum.at(game.board, x).color
       			Map.put(Enum.at(game.board, x), :color, game.turn)
-      			#temp.color = game.turn
-      			#List.replace_at(game.board, x, temp)
-      			#Enum.at(game.board, x).color = game.turn
-      			end)
-      		game
-      			|> Map.put(:board, newBoard)
+						end)
+
+						game
+							|> Map.put(:board, newBoard)
+							|> Map.put(:status, game.turn <> "'s turn")
       		end
 
       		if (noMove(game, nextTurn)) do
