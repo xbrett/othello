@@ -14,7 +14,7 @@ class Othello extends React.Component {
       turn: "black",
       player1: "",
       player2: "",
-      status: "waiting"
+      status: ""
     };
     this.channel = props.channel;
 
@@ -86,9 +86,7 @@ class Othello extends React.Component {
         <h1>Othello</h1>
         <h3>Status: {this.state.status}</h3>
         <table className="board">
-          <tbody>
            <RenderBoard root={this} tiles={this.state.board}/> 
-          </tbody>
         </table>
         <h4>Player 1: {this.state.player1}</h4>
         <h4>Player 2: {this.state.player2}</h4>
@@ -110,7 +108,7 @@ function RenderBoard(props) {
       </tr>
     );
   }
-  return <div class="board">{board}</div>;
+  return <tbody>{board}</tbody>;
 }
 
 function RenderRow(props) {
@@ -121,13 +119,13 @@ function RenderRow(props) {
     if (tiles[j].empty == true) {
       row.push(
         <td key={tiles[j].id} onClick={() =>  root.handleClick(tiles[j])}>
-          <div data-key={tiles[j].id} class="tile">{}</div>
+          <div data-key={tiles[j].id} className="tile">{}</div>
         </td>
       );
     } else {
       row.push(
         <td key={tiles[j].id} onClick={() => { root.handleClick(tiles[j])}}>
-          <div data-key={tiles[j].id} class={"tile " + tiles[j].color}>{}</div>
+          <div data-key={tiles[j].id} className={"tile " + tiles[j].color}>{}</div>
         </td>
       );
     } 

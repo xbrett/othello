@@ -1,8 +1,8 @@
 defmodule Othello.Game do
 		@start_white_piece1_id 27
 		@start_black_piece1_id 28
-		@start_white_piece2_id 35
-		@start_blakc_piece2_id 36
+		@start_white_piece2_id 36
+		@start_black_piece2_id 35
 
 #	To keep truck of players turns, we store "black" or "white" in turn,
 #	black --> player1's turn  --> black pieces
@@ -15,7 +15,7 @@ defmodule Othello.Game do
 			turn: "black",
 			player1: "",
 			player2: "",
-			status: ""
+			status: "waiting"
 		}
 
 		builtBoard = Enum.map(0..63, fn x -> %{id: x, row: div(x, 8), col: rem(x, 8), empty: true, color: nil} end)
@@ -36,7 +36,7 @@ defmodule Othello.Game do
 			|> Map.put(:color, "white")
 
 			sp4 = builtBoard
-			|> Enum.at(@start_blakc_piece2_id)  # starting black piece 2
+			|> Enum.at(@start_black_piece2_id)  # starting black piece 2
 			|> Map.put(:empty, false)
 			|> Map.put(:color, "black")
 
@@ -44,7 +44,7 @@ defmodule Othello.Game do
 			|> List.replace_at(@start_white_piece1_id, sp1)
 			|> List.replace_at(@start_black_piece1_id, sp2)
 			|> List.replace_at(@start_white_piece2_id, sp3)
-			|> List.replace_at(@start_blakc_piece2_id, sp4)
+			|> List.replace_at(@start_black_piece2_id, sp4)
 
 			Map.put(state, :board, builtBoard)
 		end
@@ -101,7 +101,7 @@ defmodule Othello.Game do
 		if (Enum.at(game.board, id).empty && game.status == "playing" && user == curPlayer) do
 			thisTurn = game.turn
 
-			nextTurn = 
+			nextTurn =
 			case game.turn do
 				"black" ->
 					"white"
@@ -189,30 +189,30 @@ defmodule Othello.Game do
 		end
 
 		# Check top-left neighbor
-		if (colC - 1 >= 0 && rowC - 1 >= 0 
+		if (colC - 1 >= 0 && rowC - 1 >= 0
 			&& Enum.at(game.board, rcToId(rowC - 1, colC - 1)).color != game.turn) do
-			
+
 			pcsToTurn = checkDirect(game, rowC - 2, colC - 2, "top-left", pcsToTurn)
 		end
 
 		# Check top-right neighbor
-		if (colC + 1 < 8 && rowC - 1 >= 0 
+		if (colC + 1 < 8 && rowC - 1 >= 0
 			&& Enum.at(game.board, rcToId(rowC - 1, colC + 1)).color != game.turn) do
-			
+
 			pcsToTurn = checkDirect(game, rowC - 2, colC + 2, "top-right", pcsToTurn)
 		end
 
 		# Check bottom-left neighbor
-		if (colC - 1 >= 0 && rowC + 1 < 8 
+		if (colC - 1 >= 0 && rowC + 1 < 8
 			&& Enum.at(game.board, rcToId(rowC + 1, colC - 1)).color != game.turn) do
-			
+
 			pcsToTurn = checkDirect(game, rowC + 2, colC - 2, "bottom-left", pcsToTurn)
 		end
 
 		# Check bottom-right neighbor
-		if (colC + 1 < 8 && rowC + 1 < 8 
+		if (colC + 1 < 8 && rowC + 1 < 8
 			&& Enum.at(game.board, rcToId(rowC + 1, colC + 1)).color != game.turn) do
-			
+
 			pcsToTurn = checkDirect(game, rowC + 2, colC + 2, "top-left", pcsToTurn)
 		end
 
