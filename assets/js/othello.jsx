@@ -4,9 +4,8 @@ import _ from 'lodash';
 
 export default function game_init(root, channel) {
     ReactDOM.render(<Othello channel={channel}/>, root);
-    channel.join()
-      .receive("ok", resp => { console.log("Joined successfully", resp) })
-      .receive("error", resp => { console.log("Unable to join", resp) })
+
+
 }
 
 class Othello extends React.Component {
@@ -20,6 +19,10 @@ class Othello extends React.Component {
       status: "waiting"
     };
     this.channel = props.channel;
+
+    this.channel.join()
+      .receive("ok", this.updateView.bind(this))
+      .receive("error", resp => { console.log("Unable to join", resp) })
   
     this.channel.on("update", view => this.updateView(view));
   }
@@ -75,21 +78,21 @@ class Othello extends React.Component {
     //     }
     //   case "player_left":
     //     return "Opponent has left the game.";
-    // }
+    // }   
   }
 
   render() {
     return (
       <div className="othello">
         <h1>Othello</h1>
-        <h3>Status: {this.getGameHeader()}</h3>
+        <h3>Status: {this.state.status}</h3>
         <table className="board">
           <tbody>
-            <RenderBoard root={this} tiles={this.state.board}/>
+           <RenderBoard root={this} tiles={this.state.board}/> 
           </tbody>
         </table>
-        <h4>Player 1: {this.state.blackScore}</h4>
-        <h4>Player 2: {this.state.whiteScore}</h4>
+        <h4>Player 1: {this.state.player1}</h4>
+        <h4>Player 2: {this.state.player2}</h4>
         <button type="button" onClick={this.restart.bind(this)}>Restart</button>
       </div>
     );
@@ -118,14 +121,14 @@ function RenderRow(props) {
   for (let j = 0; j < tiles.length; j++) {
     if (tiles[j].empty == true) {
       row.push(
-        <td key={tiles[j].key} onClick={() =>  root.handleClick(tiles[j])}>
-          <div data-key={tiles[j].key} className="tile">{}</div>
+        <td key={tiles[j].id} onClick={() =>  root.handleClick(tiles[j])}>
+          <div data-key={tiles[j].id} className="tile">{}</div>
         </td>
       );
     } else {
       row.push(
-        <td key={tiles[j].key} onClick={() => { root.handleClick(tiles[j])}}>
-          <div data-key={tiles[j].key} className={"tile " + tiles[j].color}>{}</div>
+        <td key={tiles[j].id} onClick={() => { root.handleClick(tiles[j])}}>
+          <div data-key={tiles[j].id} className={"tile " + tiles[j].color}>{}</div>
         </td>
       );
     } 
