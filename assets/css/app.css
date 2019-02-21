@@ -1,12 +1,28 @@
 /* This file is for your main application css. */
 
+.board {
+  margin: auto auto auto;
+  background-color: green;
+}
+
 .tile {
-    border: 2px solid black;
-    width: 250px;
-    height: 170px;
-    padding: 25px;
-    display: block;
-    background: lightgrey;
-    text-align: center;
-    font-size: 30px;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  background-color: blue;
+  border-radius: 50%;
+}
+
+.tile.white {
+  background-color: white; 
+}
+
+.tile.black {
+  background-color: black; 
+}
+
+.othello {
+  margin: auto auto auto;
+  width: 45%;
+  background-color: rgb(94, 64, 20);
 }
