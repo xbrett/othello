@@ -11,9 +11,9 @@ defmodule Othello.Game do
 		%{
 			board: [],
 			turn: "black",
-			....
 			player1: "",
 			player2: "",
+            status: ""
 		}
 
 		@start_white_piece1_id = 27
@@ -57,9 +57,9 @@ defmodule Othello.Game do
 		%{
 			board: game.board,
 			turn: game.turn,
-			....
 			player1: game.player1,
-			player2: game.player2
+			player2: game.player2,
+            status: game.status
 		}
 	end
 
@@ -71,7 +71,7 @@ defmodule Othello.Game do
 		# If there is no player1, add player1
 		if (game.player1 == "") do
 			game
-				|> Map.put(:player1, userName)
+			    |> Map.put(:player1, userName)
 
 		else  # There is already player1, so we are adding player2
 			# handle duplicate name needed???
@@ -87,49 +87,99 @@ defmodule Othello.Game do
 
 	def handleClick(game, id) do
 		# Only allow clicking empty cells
+
+        
+
 		if (Enum.at(game.board, id).empty) do
 			
-			# TODO
+            thisTurn = game.turn
+            nextTurn = ""
+            if (game.turn == "black") do
+                nextTurn = "white"
+            else
+                nextTurn = "black"
+            end
 
+
+            pcsToTurn = findPcsToFlip(game, id)
+            # There is somehting to turn based on the valid move
+            if (length(pcsToTurn != 0)) do
+                newBoard = Enum.map(pcsToTurn, fn x ->
+                    Enum.at(game.board, x).color = game.turn
+                end)
+
+                game
+                    |> Map.put(:board, newBoard)
+            end
+            
+            
+            if (noMove(game, nextTurn)) do
+                if (noMove(game, thisTurn)) do
+                    # END GAME
+                    game
+                        |> Map.put(:status, "finished")
+                else
+                    # Keep  playing
+                    game
+                end
+            else
+                game
+            end
 		else
 			IO.puts("BAD click")			
 		end
 	end
 
-	# Given the cell id, ensures that the move is valid
-	# board (array), id --> boolean
-	def validMove(game, id) do
+    def noMove(game, gTurn) do
+        ret = true
+        game
+            |> Map.put(:turn, gTurn)
+
+        Enum.map(0..63, fn x ->
+                if (Enum.at(game.board, x).empty) do
+                    if (length(findPcsToFlip(game, x)) > 0) do
+                        # There is a valid move for given player
+                        ret = false         
+                    end
+                end
+            end)
+
+        ret
+    end
+
+	# Given the cell id, finds the ids of pieces to flip
+	# game, id --> list of pieces' id to turn
+	def findPcsToFlip(game, id) do
 		# Based on clicked id, find the row and column
 		rowC = Enum.at(game.board, id).row
 		colC = Enum.at(game.board, id).col
 		playerTurn = game.turn
 
-		ret = false;
+        pcsToTurn = []  # Pieces to turn
 
-		# check four directions for valid move (not empty and the color is opposite to this one)
+		# check four directions for pieces to flip (not empty and the color is opposite to this one)
 
 		# Check left neighbor
 		if (colC - 1 >= 0 && Enum.at(game.board, rcToId(row, colC - 1)).color != game.turn) do
-			ret = ret || checkDirect(game, rowC, colC - 2, "left")
+            pcsToTurn = pcsToTurn ++ checkDirect(game, rowC, colC - 2, "left", pcsToTurn)
 		end
 
 		# Check right neighbor
 		if (colC + 1 < 8 && Enum.at(game.board, rcToId(row, colC + 1)).color != game.turn) do
-			ret = ret || checkDirect(game, rowC, colC + 2, "right")
+            pcsToTurn = pcsToTurn ++ checkDirect(game, rowC, colC + 2, "right", pcsToTurn)
 		end
 
 		# Check top neighbor
 		if (rowC - 1 < 8 && Enum.at(game.board, rcToId(row - 1, colC)).color != game.turn) do
-			ret = ret || checkDirect(game, rowC - 2, colC, "top")
+            pcsToTurn = pcsToTurn ++ checkDirect(game, rowC - 2, colC, "top", pcsToTurn)
 		end
 
 		# Check bottom neighbor
 		if (rowC + 1 < 8 && Enum.at(game.board, rcToId(row + 1, colC)).color != game.turn) do
-			ret = ret || checkDirect(game, rowC + 2, colC, "bottom")
+            pcsToTurn = pcsToTurn ++ checkDirect(game, rowC + 2, colC, "bottom", pcsToTurn)
 		end
 
-		# Can add if checks to stop whenever the first true (if any) is encountered as result of checkDirect
-		ret
+        pcsToTurn
 	end
 
 	# Given row and column of the board, calculates and retrurns the corresponding id
@@ -138,22 +188,22 @@ defmodule Othello.Game do
 	end
 
 	# Case of getting out of bounds
-	defp checkDirect(game, row, col) do
-		false
+	defp checkDirect(game, row, col, pcsToTurn) do
+		[]
 	end
 
 	# Checks if the cell at the given row and column is of the same type(color) as the current
 	# player's color. Recursively checks the cells to the left until finds the match, out of 
 	# bounds or empty cell is encountered
-	defp checkDirect(game, row, col, "left") do
+	defp checkDirect(game, row, col, "left", pcsToTurn) do
 		cond do
 			Enum.at(game.board, rcToId(row, col)).empty ->	# empty cell -> return false
-				false
+                []
 			col >= 0 && col < 8 ->
 				if (game.turn == Enum.at(game.board, rcToId(row, col)).color) do
-					true
+                    pcsToTurn
 				else
-					checkDirect(game, row, col - 1, "left")
+					checkDirect(game, row, col - 1, "left", pcsToTurn ++ [rcToId(row, col)])
 				end
 			true ->
 				checkDirect(game, row, col)
@@ -163,15 +213,15 @@ defmodule Othello.Game do
 	# Checks if the cell at the given row and column is of the same type(color) as the current
 	# player's color. Recursively checks the cells to the right until finds the match, out of 
 	# bounds or empty cell is encountered
-	defp checkDirect(game, row, col, "right") do
+	defp checkDirect(game, row, col, "right", pcsToTurn) do
 		cond do 
 			Enum.at(game.board, rcToId(row, col)).empty ->	# empty cell -> return false
-				false
+                []
 			col >= 0 && col < 8 ->
 				if (game.turn == Enum.at(game.board, rcToId(row, col)).color) do
-					true
+                    pcsToTurn
 				else
-					checkDirect(game, row, col + 1, "right")
+					checkDirect(game, row, col + 1, "right", pcsToTurn ++ [rcToId(row, col)])
 				end
 			true ->
 				checkDirect(game, row, col)
@@ -181,15 +231,15 @@ defmodule Othello.Game do
 	# Checks if the cell at the given row and column is of the same type(color) as the current
 	# player's color. Recursively checks the cells above until finds the match, out of bounds
 	# or empty cell is encountered
-	defp checkDirect(game, row, col, "top") do
+	defp checkDirect(game, row, col, "top", pcsToTurn) do
 		cond do
 			Enum.at(game.board, rcToId(row, col)).empty ->	# empty cell -> return false
-				false
+                []
 			row >= 0 && row < 8 ->
 				if (game.turn == Enum.at(game.board, rcToId(row, col)).color) do
-					true
+                    pcsToTurn
 				else
-					checkDirect(game, row - 1, col, "top")
+					checkDirect(game, row - 1, col, "top", pcsToTurn ++ [rcToId(row, col)])
 				end
 			true ->
 				checkDirect(game, row, col)
@@ -199,15 +249,15 @@ defmodule Othello.Game do
 	# Checks if the cell at the given row and column is of the same type(color) as the current
 	# player's color. Recursively checks the cells below until finds the match, out of bounds
 	# or empty cell is encountered
-	defp checkDirect(game, row, col, "bottom") do
+	defp checkDirect(game, row, col, "bottom", pcsToTurn) do
 		cond do
 			Enum.at(game.board, rcToId(row, col)).empty ->	# empty cell -> return false
-				false
+                []
 			row >= 0 && row < 8 ->	# valid row
 				if (game.turn == Enum.at(game.board, rcToId(row, col)).color) do
-					true
+                    pcsToTurn
 				else
-					checkDirect(game, row + 1, col, "bottom")
+					checkDirect(game, row + 1, col, "bottom", pcsToTurn ++ [rcToId(row, col)])
 				end
 			true ->
 				checkDirect(game, row, col)
