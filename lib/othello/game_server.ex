@@ -14,7 +14,7 @@ defmodule Othello.GameServer do
     GenServer.call(__MODULE__, {:view, game, user})
   end
   def click(game, user, id) do
-    GenServer.call(reg(game), {:guess, game, user, id})
+    GenServer.call(reg(game), {:click, game, user, id})
   end
 
   def init(game) do
