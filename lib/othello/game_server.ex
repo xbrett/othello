@@ -1,29 +1,18 @@
 defmodule Othello.GameServer do
   use GenServer
+  alias Othello.Game
 
   def reg(name) do
     {:via, Registry, {Othello.GameReg, name}}
   end
 
-  def start(name) do
-    spec = %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [name]},
-      restart: :permanent,
-      type: :worker,
-    }
-    Othello.GameSup.start_child(spec)
+  def start_link(_args) do
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def start_link(name) do
-    game = Othello.BackupAgent.get(name) || Othello.Game.new()
-    GenServer.start_link(__MODULE__, game, name: reg(name))
+  def view(game, user) do
+    GenServer.call(__MODULE__, {:view, game, user})
   end
-
-  def join(name, player) do
-    GenServer.call(reg(name), {:join, name, player})
-  end
-
   def click(name, tile) do
     GenServer.call(reg(name), {:guess, name, tile})
   end
@@ -32,23 +21,14 @@ defmodule Othello.GameServer do
     {:ok, game}
   end
 
-  def handle_call({:join, name, player}, _from, game) do
-    with {:ok, game} <- Othello.Game.addUser(game, player) do
-      Othello.BackupAgent.put(name, game)
-      {:reply, {:ok, game}, game}
-    else
-      {:error, msg} -> {:reply, {:error, msg}, game}
-      _ -> {:reply, {:error, "unknown error"}, game}
-    end
+  def handle_call({:view, game, _user}, _from, state) do
+    gg = Map.get(state, game, Game.new)
+    {:reply, Game.client_view(gg), Map.put(state, game, gg)}
   end
 
-  def handle_call({:click, name, tile}, _from, game) do
-    with {:ok, game} <- Othello.Game.handleClick(game, tile) do
-      Othello.BackupAgent.put(name, game)
-      {:reply, {:ok, game}, game}
-    else
-      {:error, msg} -> {:reply, {:error, msg}, game}
-      _ -> {:reply, {:error, "unknown error"}, game}
-    end
+  def handle_call({:click, game, id}, _from, state) do
+    gg = Map.get(state, game, Game.new)
+    |> Game.handleClick(id)
+    {:reply, Game.client_view(gg), Map.put(state, game, gg)}
   end
 end

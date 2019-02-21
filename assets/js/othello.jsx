@@ -43,7 +43,7 @@ class Othello extends React.Component {
 
   handleClick(tile) {
 
-    if (tile.color == "green") {
+    if (tile.empty == true) {
       this.channel.push("click", {tile: tile})
         .receive("ok", this.updateView.bind(this));
     } else {

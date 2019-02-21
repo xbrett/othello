@@ -4,24 +4,14 @@ defmodule OthelloWeb.GamesChannel do
   alias Othello.Game
   alias Othello.GameServer
 
-  def join("game:" <> name, %{"player" => player}, socket) do
-    GameServer.reg(name)
-    GameServer.start(name)
-    reply = GameServer.join(name, player)
-
-    socket = socket
-    |> assign(:name, name)
-    |> assign(:player, player)
-
-    case reply do
-      {:ok, game} -> {:ok, %{game: Game.client_view(game)}, socket}
-      {:error, msg} -> {:error, %{msg: msg}}
-      _ -> {:error, %{msg: "unknown error"}}
-    end
+  def join("game:" <> game, _payload, socket) do
+    socket = assign(socket, :game, game)
+    view = GameServer.view(game, socket.assigns[:user])
+    {:ok, %{"join" => game, "game" => view}, socket}
   end
 
-  def handle_in("click", %{"tile" => tile}, socket) do
-    reply = GameServer.click(socket.assigns[:name], tile)
+  def handle_in("click", %{"id" => id}, socket) do
+    reply = GameServer.click(socket.assigns[:name], id)
     case reply do
       {:ok, game} -> broadcast(socket, "playing", %{game: Game.client_view(game)})
                     {:noreply, socket}
