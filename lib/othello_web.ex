@@ -21,7 +21,7 @@ defmodule OthelloWeb do
     quote do
       use Phoenix.Controller, namespace: OthelloWeb
       import Plug.Conn
-      import OthelloWeb.Router.Helpers
+      alias OthelloWeb.Router.Helpers, as: Routes
       import OthelloWeb.Gettext
     end
   end
@@ -37,7 +37,7 @@ defmodule OthelloWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import OthelloWeb.Router.Helpers
+      alias OthelloWeb.Router.Helpers, as: Routes
       import OthelloWeb.ErrorHelpers
       import OthelloWeb.Gettext
     end

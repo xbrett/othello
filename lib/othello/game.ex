@@ -1,9 +1,9 @@
 defmodule Othello.Game do
-	
+
 #	To keep truck of players turns, we store "black" or "white" in turn,
 #	black --> player1's turn  --> black pieces
 #	white --> player2's turn  --> white pieces
-	
+
 	def new do
 		state =
 		%{
@@ -96,7 +96,7 @@ defmodule Othello.Game do
 			end
 
 			pcsToTurn = findPcsToFlip(game, id)
-			
+
       # There is somehting to turn based on the valid move
       if (length(pcsToTurn != 0)) do
       	newBoard = Enum.map(pcsToTurn, fn x ->
