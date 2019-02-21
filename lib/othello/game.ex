@@ -70,12 +70,14 @@ defmodule Othello.Game do
 		if (game.player1 == "") do
 			game
 			|> Map.put(:player1, userName)
+			|> Map.put(:status, "waiting")
 
 		else  # There is already player1, so we are adding player2
 			# handle duplicate name needed???
 			if (game.player2 == "") do
 				game
 				|> Map.put(:player2, userName)
+				|> Map.put(:status, "playing")
 
 			# else	# There are two players in the game already
 				## TODO ??? ##
@@ -83,8 +85,10 @@ defmodule Othello.Game do
 		end
 	end
 
-	def handleClick(game, id) do
+	def handleClick(game, user, id) do
 		# Only allow clicking empty cells
+
+		# Add check to see if it is the appropriate users turn
 
 		if (Enum.at(game.board, id).empty) do
 			thisTurn = game.turn

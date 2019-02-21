@@ -13,8 +13,8 @@ defmodule Othello.GameServer do
   def view(game, user) do
     GenServer.call(__MODULE__, {:view, game, user})
   end
-  def click(name, tile) do
-    GenServer.call(reg(name), {:guess, name, tile})
+  def click(game, user, id) do
+    GenServer.call(reg(game), {:guess, game, user, id})
   end
 
   def init(game) do
@@ -26,9 +26,9 @@ defmodule Othello.GameServer do
     {:reply, Game.client_view(gg), Map.put(state, game, gg)}
   end
 
-  def handle_call({:click, game, id}, _from, state) do
+  def handle_call({:click, game, user, id}, _from, state) do
     gg = Map.get(state, game, Game.new)
-    |> Game.handleClick(id)
+    |> Game.handleClick(user, id)
     {:reply, Game.client_view(gg), Map.put(state, game, gg)}
   end
 end

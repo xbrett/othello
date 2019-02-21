@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 export default function game_init(root, channel) {
-  ReactDOM.render(<Othello channel={channel}/>, root);
+  
+    ReactDOM.render(<Othello channel={channel}/>, root);
+  
 }
 
 class Othello extends React.Component {
@@ -11,23 +13,21 @@ class Othello extends React.Component {
     super(props);
     this.state = { 
       board: [],
-      player: "",
-      turn: "black",
-      blackScore: 2,
-      whiteScore: 2,
+      turn: "balck",
+      player1: "",
+      player2: "",
       status: "waiting"
     };
     this.channel = props.channel;
+
+
 
     this.channel.on("waiting", view => { this.updateView(view, "waiting") });
     this.channel.on("playing", view => { this.updateView(view, "playing") });
     this.channel.on("finished", view => { this.gameOver(view, "finished") });
     this.channel.on("player_left", view => { this.gameOver(view, "player_left") });
 
-    this.channel
-        .join()
-        .receive("ok", this.updateView.bind(this))
-        .receive("error", resp => { console.log("Unable to join", resp); });
+
   }
 
   updateView(view, status) {
@@ -44,7 +44,7 @@ class Othello extends React.Component {
   handleClick(tile) {
 
     if (tile.empty == true) {
-      this.channel.push("click", {tile: tile})
+      this.channel.push("click", {id: tile.id})
         .receive("ok", this.updateView.bind(this));
     } else {
       return;
@@ -52,36 +52,37 @@ class Othello extends React.Component {
   }
 
   restart() {
-    this.channel.push("new")
+    this.channel.push("restart")
         .receive("ok", this.updateView.bind(this));
   }
 
   getGameHeader() {
-    switch(this.game.status) {
-      case "waiting":
-        return "Opponents turn";
-      case "playing":
-        if (this.state.turn == this.state.player) {
-            return "Your turn";
-        }
-        return `It's Player ${this.state.turn}'s turn.`;
-      case "finished":
-        if (blackScore < whiteScore) {
-            if (this.state.player == "white") {
-            return "You won!";
-            }
-            return "Player 2 won!";
-        } else if (blackScore > whiteScore) {
-            if (this.state.player == "black") {
-            return "You won!";
-            }
-            return "Player 1 won!";
-        } else {
-            return "Tie";
-        }
-      case "player_left":
-        return "Opponent has left the game.";
-    }
+    // switch(this.game.status) {
+    //   case "waiting":
+    //     return "Waiting for another player to join";
+    //   case "playing":
+    //     if (this.state.turn == "black") {
+    //         return "Black's turn";
+    //     } else {
+    //       return "White's Turn";
+    //     }
+    //   case "finished":
+    //     if (blackScore < whiteScore) {
+    //         if (this.state.player == "white") {
+    //         return "You won!";
+    //         }
+    //         return "Player 2 won!";
+    //     } else if (blackScore > whiteScore) {
+    //         if (this.state.player == "black") {
+    //         return "You won!";
+    //         }
+    //         return "Player 1 won!";
+    //     } else {
+    //         return "Tie";
+    //     }
+    //   case "player_left":
+    //     return "Opponent has left the game.";
+    // }
   }
 
   render() {

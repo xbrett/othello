@@ -11,7 +11,7 @@ defmodule OthelloWeb.GamesChannel do
   end
 
   def handle_in("click", %{"id" => id}, socket) do
-    reply = GameServer.click(socket.assigns[:name], id)
+    reply = GameServer.click(socket.assigns[:name], socket.assigns[:user], id)
     case reply do
       {:ok, game} -> broadcast(socket, "playing", %{game: Game.client_view(game)})
                     {:noreply, socket}
