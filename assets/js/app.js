@@ -22,6 +22,7 @@ import game_init from "./othello";
 $(() => {
   let root = $('#root')[0];
   if (root) {
+    socket.connect();
     let channel = socket.channel("game:" + window.gameName, {});
     game_init(root, channel);
   }

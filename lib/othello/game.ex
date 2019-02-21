@@ -1,4 +1,8 @@
 defmodule Othello.Game do
+		@start_white_piece1_id 27
+		@start_black_piece1_id 28
+		@start_white_piece2_id 35
+		@start_blakc_piece2_id 36
 
 #	To keep truck of players turns, we store "black" or "white" in turn,
 #	black --> player1's turn  --> black pieces
@@ -13,11 +17,6 @@ defmodule Othello.Game do
 			player2: "",
 			status: ""
 		}
-
-		@start_white_piece1_id = 27
-		@start_black_piece1_id = 28
-		@start_white_piece2_id = 35
-		@start_blakc_piece2_id = 36
 
 		builtBoard = Enum.map(0..63, fn x -> %{id: x, row: div(x, 8), col: rem(x, 8), empty: true, color: nil} end)
 

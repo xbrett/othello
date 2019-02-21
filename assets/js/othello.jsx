@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 export default function game_init(root, channel) {
-  
     ReactDOM.render(<Othello channel={channel}/>, root);
-  
+    channel.join()
+      .receive("ok", resp => { console.log("Joined successfully", resp) })
+      .receive("error", resp => { console.log("Unable to join", resp) })
 }
 
 class Othello extends React.Component {
@@ -19,21 +20,13 @@ class Othello extends React.Component {
       status: "waiting"
     };
     this.channel = props.channel;
-
-
-
-    this.channel.on("waiting", view => { this.updateView(view, "waiting") });
-    this.channel.on("playing", view => { this.updateView(view, "playing") });
-    this.channel.on("finished", view => { this.gameOver(view, "finished") });
-    this.channel.on("player_left", view => { this.gameOver(view, "player_left") });
-
-
+  
+    this.channel.on("update", view => this.updateView(view));
   }
 
   updateView(view, status) {
     console.log("View updated: " + view.game);
     this.setState(view.game);
-    this.setState({ status: status })
   }
 
   gameOver(view, status) {
