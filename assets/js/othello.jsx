@@ -4,8 +4,6 @@ import _ from 'lodash';
 
 export default function game_init(root, channel) {
     ReactDOM.render(<Othello channel={channel}/>, root);
-
-
 }
 
 class Othello extends React.Component {
@@ -13,7 +11,7 @@ class Othello extends React.Component {
     super(props);
     this.state = { 
       board: [],
-      turn: "balck",
+      turn: "black",
       player1: "",
       player2: "",
       status: "waiting"
@@ -28,7 +26,7 @@ class Othello extends React.Component {
     this.channel.on("update", view => this.updateView(view));
   }
 
-  updateView(view, status) {
+  updateView(view) {
     console.log("View updated: " + view.game);
     this.setState(view.game);
   }
@@ -112,7 +110,7 @@ function RenderBoard(props) {
       </tr>
     );
   }
-  return board;
+  return <div class="board">{board}</div>;
 }
 
 function RenderRow(props) {
@@ -123,13 +121,13 @@ function RenderRow(props) {
     if (tiles[j].empty == true) {
       row.push(
         <td key={tiles[j].id} onClick={() =>  root.handleClick(tiles[j])}>
-          <div data-key={tiles[j].id} className="tile">{}</div>
+          <div data-key={tiles[j].id} class="tile">{}</div>
         </td>
       );
     } else {
       row.push(
         <td key={tiles[j].id} onClick={() => { root.handleClick(tiles[j])}}>
-          <div data-key={tiles[j].id} className={"tile " + tiles[j].color}>{}</div>
+          <div data-key={tiles[j].id} class={"tile " + tiles[j].color}>{}</div>
         </td>
       );
     } 
