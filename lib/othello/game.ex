@@ -13,7 +13,7 @@ defmodule Othello.Game do
 		%{
 			board: [],
 			turn: "black",
-			player1: "",
+			player1: "sss",
 			player2: "",
 			status: ""
 		}
@@ -100,11 +100,13 @@ defmodule Othello.Game do
 
 		if (Enum.at(game.board, id).empty && game.status == "playing" && user == curPlayer) do
 			thisTurn = game.turn
-			nextTurn = ""
-			if (game.turn == "black") do
-				nextTurn = "white"
-			else
-				nextTurn = "black"
+
+			nextTurn = 
+			case game.turn do
+				"black" ->
+					"white"
+				"white" ->
+					"black"
 			end
 
 			pcsToTurn = findPcsToFlip(game, id)
