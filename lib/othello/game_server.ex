@@ -33,7 +33,7 @@ defmodule Othello.GameServer do
   end
 
   def handle_call({:join, name, player}, _from, game) do
-    with {:ok, game} <- Othello.Game.join(game, player) do
+    with {:ok, game} <- Othello.Game.addUser(game, player) do
       Othello.BackupAgent.put(name, game)
       {:reply, {:ok, game}, game}
     else
