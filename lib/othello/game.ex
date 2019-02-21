@@ -111,48 +111,47 @@ defmodule Othello.Game do
 
 			pcsToTurn = findPcsToFlip(game, id)
 
-      		# There is somehting to turn based on the valid move
-      		if (length(pcsToTurn != 0)) do
-      			newBoard = Enum.map(pcsToTurn, fn x ->
-      			Map.put(Enum.at(game.board, x), :color, game.turn)
-						end)
+			# There is somehting to turn based on the valid move
+			if (length(pcsToTurn) != 0) do
+				newBoard = Enum.map(pcsToTurn, fn x ->
+					Map.put(Enum.at(game.board, x), :color, game.turn)
+				end)
 
+				game
+					|> Map.put(:board, newBoard)
+					|> Map.put(:status, game.turn <> "'s turn")
+			end
+
+			if (noMove(game, nextTurn)) do
+				if (noMove(game, thisTurn)) do
+						# END GAME
 						game
-							|> Map.put(:board, newBoard)
-							|> Map.put(:status, game.turn <> "'s turn")
-      		end
-
-      		if (noMove(game, nextTurn)) do
-      			if (noMove(game, thisTurn)) do
-          			# END GAME
-          			game
-          				|> Map.put(:status, "finished")
-      			else
-          			# Keep  playing
-          			game
-      			end
-  			else
-  				game
-  			end
+							|> Map.put(:status, "finished")
+				else
+						# Keep  playing
+						game
+				end
+			else
+				game
+			end
 		else
 			IO.puts("BAD click")
 		end
 	end
 
 	def noMove(game, gTurn) do
-		ret = true
 		game
 		|> Map.put(:turn, gTurn)
 
 		Enum.map(0..63, fn x ->
 			if (Enum.at(game.board, x).empty) do
 				if (length(findPcsToFlip(game, x)) > 0) do
-	          # There is a valid move for given player
-	          ret = false
-	      		end
-	  		end
+					# There is a valid move for given player
+					false
+	      end
+	  	end
 		end)
-		ret
+		true
 	end
 
 	# Given the cell id, finds the ids of pieces to flip
