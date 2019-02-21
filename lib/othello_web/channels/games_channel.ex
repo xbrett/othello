@@ -11,7 +11,7 @@ defmodule OthelloWeb.GamesChannel do
 
     socket = socket
     |> assign(:name, name)
-    |> assign(:user, user)
+    |> assign(:player, player)
 
     case reply do
       {:ok, game} -> {:ok, %{game: Game.client_view(game, player)}, socket}
