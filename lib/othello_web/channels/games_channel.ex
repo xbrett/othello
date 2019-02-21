@@ -9,13 +9,13 @@ defmodule OthelloWeb.GamesChannel do
     lala = socket.assigns[:user]
     IO.inspect(lala)
     view = GameServer.view(game, lala)
-    #push_update! view, socket
+    push_update view, socket
     {:ok, %{"join" => game, "game" => view}, socket}
   end
 
   def handle_in("click", %{"id" => id}, socket) do
     view = GameServer.click(socket.assigns[:name], socket.assigns[:user], id)
-    push_update! view, socket
+    push_update view, socket
     {:reply, {:ok, %{ "game" => view}}, socket}
   end
 
@@ -25,8 +25,8 @@ defmodule OthelloWeb.GamesChannel do
     {:noreply, socket}
   end
 
-  defp push_update!(view, socket) do
-    broadcast!(socket, "update", view)
+  defp push_update(view, socket) do
+    broadcast(socket, "update", view)
   end
 
 end

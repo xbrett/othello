@@ -81,8 +81,9 @@ defmodule Othello.Game do
 				|> Map.put(:player2, userName)
 				|> Map.put(:status, "black's turn")
 
-			# else	# There are two players in the game already
+			else	# There are two players in the game already
 				## TODO ??? ##
+				#game
 			end
 		end
 	end

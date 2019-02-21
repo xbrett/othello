@@ -22,6 +22,7 @@ defmodule Othello.GameServer do
   end
 
   def handle_call({:view, game, user}, _from, state) do
+    IO.puts(game)
     gg = Map.get(state, game, Game.new)
     gg = Game.addUser(gg, user)
     IO.puts("ADDED USER")

@@ -23,6 +23,7 @@ $(() => {
   let root = $('#root')[0];
   if (root) {
     socket.connect();
+    console.log(window.gameName)
     let channel = socket.channel("game:" + window.gameName, {});
     game_init(root, channel);
   }

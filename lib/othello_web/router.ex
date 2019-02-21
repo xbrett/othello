@@ -18,7 +18,7 @@ defmodule OthelloWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    get "/game/:name", PageController, :game
+    get "/game/:game", PageController, :game
 
     post "/join", PageController, :join
   end
