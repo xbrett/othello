@@ -18,7 +18,16 @@ defmodule OthelloWeb.GamesChannel do
     game = socket.assigns[:game]
     view = BackupAgent.get(game)
     view = Game.handleClick(view, socket.assigns[:user], id)
-    BackupAgent.put(socket.assigns[:game], view)
+    BackupAgent.put(game, view)
+    OthelloWeb.Endpoint.broadcast("game:#{game}", "update", %{"game" => view})
+    {:reply, {:ok, %{ "game" => view}}, socket}
+  end
+
+  def handle_in("restart", %{}, socket) do
+    game = socket.assigns[:game]
+    view = BackupAgent.get(game)
+    view = Game.reset(view)
+    BackupAgent.put(game, view)
     OthelloWeb.Endpoint.broadcast("game:#{game}", "update", %{"game" => view})
     {:reply, {:ok, %{ "game" => view}}, socket}
   end
