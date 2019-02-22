@@ -24,5 +24,5 @@ _build/prod/rel/othello/bin/othello stop || true
 
 echo "Starting app..."
 
-_build/prod/rel/othello/bin/othello start
+_build/prod/rel/othello/bin/othello foreground
 
