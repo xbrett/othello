@@ -47,7 +47,5 @@ defmodule OthelloWeb.UserSocket do
 
   #OthelloWeb.Endpoint.broadcast(socket.assigns[:user], "update", %{})
 
-  def id(socket), do: 
-
-  socket.assigns[:user]
+  def id(socket), do: socket.assigns[:user]
 end
