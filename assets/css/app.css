@@ -9,8 +9,13 @@
   width: 50px;
   height: 50px;
   padding: 0;
-  background-color: blue;
+  background-color: darkgreen;
+  
   border-radius: 50%;
+}
+
+.tile:hover {
+  background-color: yellow;
 }
 
 .tile.white {
