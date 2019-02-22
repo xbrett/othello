@@ -2,9 +2,9 @@ defmodule Othello.GameServer do
   use GenServer
   alias Othello.Game
 
-  def reg(name) do
-    {:via, Registry, {Othello.GameReg, name}}
-  end
+ # def reg(name) do
+ #   {:via, Registry, {Othello.GameReg, name}}
+ # end
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
@@ -14,7 +14,8 @@ defmodule Othello.GameServer do
     GenServer.call(__MODULE__, {:view, game, user})
   end
   def click(game, user, id) do
-    GenServer.call(reg(game), {:click, game, user, id})
+    #GenServer.call(reg(game), {:click, game, user, id})
+    GenServer.call(__MODULE__, {:click, game, user, id})
   end
 
   def init(game) do

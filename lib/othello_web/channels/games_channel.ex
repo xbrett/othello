@@ -14,7 +14,7 @@ defmodule OthelloWeb.GamesChannel do
   end
 
   def handle_in("click", %{"id" => id}, socket) do
-    view = GameServer.click(socket.assigns[:name], socket.assigns[:user], id)
+    view = GameServer.click(socket.assigns[:game], socket.assigns[:user], id)
     push_update! view, socket
     {:reply, {:ok, %{ "game" => view}}, socket}
   end

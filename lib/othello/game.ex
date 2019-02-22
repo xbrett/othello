@@ -99,7 +99,7 @@ defmodule Othello.Game do
 				game.player2
 		end
 
-		if (Enum.at(game.board, id).empty && game.status == "playing" && user == curPlayer) do
+		if (Enum.at(game.board, id).empty && game.status != "waiting" && user == curPlayer) do
 			thisTurn = game.turn
 
 			nextTurn =
@@ -123,20 +123,21 @@ defmodule Othello.Game do
 					|> Map.put(:status, game.turn <> "'s turn")
 			end
 
-			if (noMove(game, nextTurn)) do
-				if (noMove(game, thisTurn)) do
-						# END GAME
-						game
-							|> Map.put(:status, "finished")
-				else
-						# Keep  playing
-						game
-				end
-			else
-				game
-			end
+			# if (noMove(game, nextTurn)) do
+			# 	if (noMove(game, thisTurn)) do
+			# 			# END GAME
+			# 			game
+			# 				|> Map.put(:status, "finished")
+			# 	else
+			# 			# Keep  playing
+			# 			game
+			# 	end
+			# else
+			# 	game
+			# end
 		else
 			IO.puts("BAD click")
+			game
 		end
 	end
 
@@ -303,6 +304,7 @@ defmodule Othello.Game do
 	# player's color. Recursively checks the top-left cells until finds the match, out of bounds
 	# or empty cell is encountered
 	defp checkDirect(game, row, col, "top-left", pcsToTurn) do
+		IO.inspect(game)
 		cond do
 			Enum.at(game.board, rcToId(row, col)).empty ->
 				[]
