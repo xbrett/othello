@@ -44,5 +44,10 @@ defmodule OthelloWeb.UserSocket do
   #     OthelloWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
-  def id(socket), do: socket.assigns[:user]
+
+  #OthelloWeb.Endpoint.broadcast(socket.assigns[:user], "update", %{})
+
+  def id(socket), do: 
+
+  socket.assigns[:user]
 end
