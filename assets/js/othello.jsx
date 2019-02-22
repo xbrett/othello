@@ -51,35 +51,6 @@ class Othello extends React.Component {
         .receive("ok", this.updateView.bind(this));
   }
 
-  getGameHeader() {
-    // switch(this.game.status) {
-    //   case "waiting":
-    //     return "Waiting for another player to join";
-    //   case "playing":
-    //     if (this.state.turn == "black") {
-    //         return "Black's turn";
-    //     } else {
-    //       return "White's Turn";
-    //     }
-    //   case "finished":
-    //     if (blackScore < whiteScore) {
-    //         if (this.state.player == "white") {
-    //         return "You won!";
-    //         }
-    //         return "Player 2 won!";
-    //     } else if (blackScore > whiteScore) {
-    //         if (this.state.player == "black") {
-    //         return "You won!";
-    //         }
-    //         return "Player 1 won!";
-    //     } else {
-    //         return "Tie";
-    //     }
-    //   case "player_left":
-    //     return "Opponent has left the game.";
-    // }   
-  }
-
   render() {
     return (
       <div className="othello">
