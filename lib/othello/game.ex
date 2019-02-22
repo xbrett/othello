@@ -104,6 +104,8 @@ defmodule Othello.Game do
 		if (Enum.at(game.board, id).empty && game.status != "waiting" && user == curPlayer) do
 			thisTurn = game.turn
 
+			curTurn = game.turn
+
 			nextTurn =
 			case game.turn do
 				"black" ->
@@ -127,27 +129,64 @@ defmodule Othello.Game do
 						Enum.at(game.board, x)
 					end
 				end)
-				game
+
+				game = Map.put(game, :pcsToTurn, [])
+				|> Map.put(:board, newBoard)
+				|> Map.put(:turn, nextTurn)
+
+				if List.foldl(game.board, false, fn x, acc ->
+						if x.empty do
+							game = Map.put(game, :pcsToTurn, [])
+							|> findPcsToFlip(x.id)							
+							acc || (length(game.pcsToTurn) > 1)
+						else
+							acc
+						end
+					end) do
+					game
 					|> Map.put(:pcsToTurn, [])
-					|> Map.put(:board, newBoard)
 					|> Map.put(:status, nextTurn <> "'s turn")
-					|> Map.put(:turn, nextTurn)
+				else
+					game = Map.put(game, :turn, curTurn)
+					|> Map.put(:pcsToTurn, [])
+					if List.foldl(game.board, false, fn x, acc ->
+						if x.empty do
+							game = Map.put(game, :pcsToTurn, [])
+							|> findPcsToFlip(x.id)	
+							acc || (length(findPcsToFlip(game, x.id)) > 1)	
+						else
+							acc
+						end
+					end) do
+						game
+						|> Map.put(:pcsToTurn, [])
+					else
+
+						if calcWinner(game) > 0 do
+							game
+							|> Map.put(:status, "Black WINS!")
+						else
+							if calcWinner(game) < 0 do
+								game
+								|> Map.put(:status, "White WINS!")
+							else
+								game
+								|> Map.put(:status, "TIE!")
+							end
+						end
+
+					end
+				end
+
+				# Switching turns
+				# game
+				# 	|> Map.put(:pcsToTurn, [])
+				# 	|> Map.put(:board, newBoard)
+				# 	|> Map.put(:status, nextTurn <> "'s turn")
+				# 	|> Map.put(:turn, nextTurn)
 			else
 				game
 			end
-
-			# if (noMove(game, nextTurn)) do
-			# 	if (noMove(game, thisTurn)) do
-			# 			# END GAME
-			# 			game
-			# 				|> Map.put(:status, "finished")
-			# 	else
-			# 			# Keep  playing
-			# 			game
-			# 	end
-			# else
-			# 	game
-			# end
 		else
 			IO.puts("BAD click")
 			game
@@ -161,19 +200,21 @@ defmodule Othello.Game do
 		end)
 	end
 
-	def noMove(game, gTurn) do
-		game
-		|> Map.put(:turn, gTurn)
-
-		Enum.map(0..63, fn x ->
-			if (Enum.at(game.board, x).empty) do
-				if (length(findPcsToFlip(game, x)) > 0) do
-					# There is a valid move for given player
-					false
-	      end
-	  	end
+	# negative --> White wins
+	# 0 --> Tie
+	# positive --> Black wins
+	defp calcWinner(game) do
+		List.foldl(game.board, 0, fn x, acc ->
+			if (x.color == "black") do
+				acc + 1
+			else
+				if (x.color == "white") do
+					acc - 1
+				else
+					acc
+				end
+			end
 		end)
-		true
 	end
 
 	# Game, id --> Game
