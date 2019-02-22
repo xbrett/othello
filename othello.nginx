@@ -3,7 +3,7 @@ server {
     listen [::]:80;
 
     # TODO: This should be your server name.
-    server_name othello.concola9.com;
+    server_name othello.foolsparadice.com;
 
     location / {
         proxy_pass http://localhost:4793;

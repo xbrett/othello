@@ -79,7 +79,7 @@ defmodule Othello.Game do
 
 		else  # There is already player1, so we are adding player2
 			# handle duplicate name needed???
-			if (game.player2 == "") do
+			if (game.player2 == "" && game.player1 != userName) do
 				game
 				|> Map.put(:player2, userName)
 				|> Map.put(:status, "black's turn")
@@ -117,7 +117,7 @@ defmodule Othello.Game do
 			# There is somehting to turn based on the valid move
 			if (length(game.pcsToTurn) != 0) do
 
-				newBoard = Enum.map(0..63, fn x -> 
+				newBoard = Enum.map(0..63, fn x ->
 					if contain(game.pcsToTurn, x) do
 						temp = Enum.at(game.board, x)
 						|> Map.put(:color, game.turn)
@@ -156,7 +156,7 @@ defmodule Othello.Game do
 
 	# Whether the list contains x
 	defp contain(list, x) do
-		List.foldl(list, false, fn d, acc -> 
+		List.foldl(list, false, fn d, acc ->
 			acc || (d == x)
 		end)
 	end
@@ -179,12 +179,12 @@ defmodule Othello.Game do
 	# Game, id --> Game
 	def findPcsToFlip(game, id) do
 	rowC = Enum.at(game.board, id).row
-	colC = Enum.at(game.board, id).col	
+	colC = Enum.at(game.board, id).col
 
 	game
 	|> Map.put(:locAcc, [rcToId(rowC, colC)])
 	|> checkDirect(rowC, colC - 1, 0, -1)		# left direction
-	|> Map.put(:locAcc, [rcToId(rowC, colC)])	
+	|> Map.put(:locAcc, [rcToId(rowC, colC)])
 	|> checkDirect(rowC, colC + 1, 0, 1)  		# right direction
 	|> Map.put(:locAcc, [rcToId(rowC, colC)])
 	|> checkDirect(rowC - 1, colC, -1, 0)		# top direction
