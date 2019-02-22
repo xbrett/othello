@@ -1,0 +1,16 @@
+[Unit]
+Description=Othello Game
+
+[Service]
+Type=simple
+User=othllo
+Group=othello
+Restart=on-failure
+Environment=MIX_ENV=prod "PORT=4793"
+Environment=LANG=en_US.UTF-8
+
+WorkingDirectory=/home/hw04/webdev-hw04
+ExecStart=/home/hw04/webdev-hw04/start.sh
+
+[Install]
+WantedBy=multi-user.target

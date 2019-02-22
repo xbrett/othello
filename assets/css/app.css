@@ -3,6 +3,7 @@
 .board {
   margin: auto auto auto;
   background-color: green;
+  border: 3px solid black;
 }
 
 .tile {
