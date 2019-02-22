@@ -61,7 +61,7 @@ class Othello extends React.Component {
         </table>
         <h4>Black: {this.state.player1}</h4>
         <h4>White: {this.state.player2}</h4>
-        <button type="button" onClick={this.restart.bind(this)}>Restart</button>
+        <button className="restart" type="button" onClick={this.restart.bind(this)}>Restart</button>
       </div>
     );
   }
