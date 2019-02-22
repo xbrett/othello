@@ -59,8 +59,8 @@ class Othello extends React.Component {
         <table className="board">
            <RenderBoard root={this} tiles={this.state.board}/> 
         </table>
-        <h4>Player 1: {this.state.player1}</h4>
-        <h4>Player 2: {this.state.player2}</h4>
+        <h4>Black: {this.state.player1}</h4>
+        <h4>White: {this.state.player2}</h4>
         <button type="button" onClick={this.restart.bind(this)}>Restart</button>
       </div>
     );
